@@ -16,7 +16,7 @@ vfio
 vfio_iommu_type1
 vfio_pci
 ```
-* Note: `vfio_virqfd` is present in multipe guides online, but it should not be required with kernels >= 6.2.x as it is been folded directly into the kernel See for example [this document](https://forum.proxmox.com/threads/pci-gpu-passthrough-on-proxmox-ve-8-installation-and-configuration.130218/) at the section "VFIO modules and verification of remapping support"
+* Note: `vfio_virqfd` is present in multipe guides online, but it should not be required with kernels >= 6.2.x as it is been folded directly into the vfio module. See for example [this document](https://forum.proxmox.com/threads/pci-gpu-passthrough-on-proxmox-ve-8-installation-and-configuration.130218/) at the section "VFIO modules and verification of remapping support"
 * Check the GPU device and vendor IDs:
 ```
 lspci -nn | grep -e 'AMD/ATI'
