@@ -6,9 +6,15 @@ GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt initcall_blacklist=sysfb_init nomodeset vid
 * Run `update-grub` to make the above changes effective at the next reboot
 * Edit `/etc/modprobe.d/blacklist.conf` and blacklist AMD GPU and Intel souund modules:
 ```
-blacklist snd_hda_intel
-blacklist amdgpu
-blacklist radeon
+echo "blacklist snd_hda_intel" >> /etc/modprobe.d/blacklist.conf
+echo "blacklist amdgpu"  >> /etc/modprobe.d/blacklist.conf
+echo "blacklist radeon" >>  >> /etc/modprobe.d/blacklist.conf
+```
+* Alternatively to the above:
+```
+echo "softdep radeon pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
+echo "softdep amdgpu pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
+echo "softdep snd_hda_intel pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
 ```
 * Edit `/etc/modules` and add vfio modules:
 ```
