@@ -9,7 +9,7 @@ Current hardware (a bit anaemic in 2025, but dirty cheap and good enough for exp
 
 ## Rationale
 Wanted a low budget APU system with ECC support:
-* Integrated GPU -> no need for descrete GPU
+* Integrated GPU -> Does not require a descrete GPU for basic use.
 * Relatively low power
-* Low noise
-* Enables experimenting with integrated GPU passthrough & ZFS for NAS use
+* Relatively low noise
+* Good enoguh for experimenting with integrated GPU passthrough & ZFS for NAS use
