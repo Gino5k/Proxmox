@@ -47,7 +47,7 @@ shutdown -r now
 ```
 dmesg | grep -i -e DMAR -e IOMMU
 ```
-## VM Configuarion in Proxmox
+## VM Configuration in Proxmox
 * See the steps in the ["Creating the Windows VM"](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#creating-the-windows-vm) section of this document.
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
