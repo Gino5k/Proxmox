@@ -1,8 +1,8 @@
 # GPU Passthrough
 * Enable IOMMU in the BIOS:
- * SVM mode
- * SR-IOV
- * IOMMU
+   * SVM mode
+   * SR-IOV
+   * IOMMU
 * Edit the following line in `/etc/default/grub`: 
 ```
 GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt initcall_blacklist=sysfb_init nomodeset video=vesa:off"
