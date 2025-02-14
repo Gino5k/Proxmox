@@ -1,4 +1,8 @@
 # GPU Passthrough
+* Enable IOMMU in the BIOS:
+ * SVM mode
+ * SR-IOV
+ * IOMMU
 * Edit the following line in `/etc/default/grub`: 
 ```
 GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt initcall_blacklist=sysfb_init nomodeset video=vesa:off"
@@ -10,7 +14,7 @@ echo "blacklist snd_hda_intel" >> /etc/modprobe.d/blacklist.conf
 echo "blacklist amdgpu"  >> /etc/modprobe.d/blacklist.conf
 echo "blacklist radeon" >>  >> /etc/modprobe.d/blacklist.conf
 ```
-* Alternatively to the above:
+* Alternative to the above: use `sofdep`:
 ```
 echo "softdep radeon pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
 echo "softdep amdgpu pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
