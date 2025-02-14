@@ -1,5 +1,6 @@
 # GPU Passthrough
-## Enable IOMMU in the BIOS via the following options:
+## Enable IOMMU in the BIOS
+Via the following options:
 * SVM mode
 * SR-IOV
 * IOMMU
