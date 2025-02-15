@@ -18,7 +18,7 @@ Wanted a low budget APU system with ECC support:
 After completing the basic installation, login as root via ssh and execute the following steps:
 * Proxmox VE comes with Enterprise repositories configured by default, switch to the non-subscription ones to get proxmox updates:
 ```
-  bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
+bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-install.sh)"
 ```
 * Install the CPU Microcode packages:
 ```
