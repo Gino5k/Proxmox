@@ -50,18 +50,27 @@ dmesg | grep -i -e DMAR -e IOMMU
 ## VM Configuration in Proxmox
 * See the steps in the ["Creating the Windows VM"](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#creating-the-windows-vm) section of this document.
 ## Configuring the GPU in the Windows VM
-The instructions [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) are generally applicable, with the following caveats:
-  1. For Ryzen APU passthrough the section marked as [Optional](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) is requird, i.e.: *two* files must be passed to the VM:
+The instructions [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) are generally applicable, with the following changes / caveats:
+1. For Ryzen APU passthrough the section [(optional) Getting OVMF (UEFI) BIOS working: Error 43](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) is indeed required, i.e.:*two* files must be passed to the VM:.
   * The VGA vBIOS
-  * The "AMDGopDriver"
- 2. Neither of theese methods to extract the vBIOS worked in my case:
-  * Using the `vbios.c` file as reported [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm)
-  * Using [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) "save bios" function running on baremetal Windows 11.
+  * The AMDGopDriver
+  
+    In practice this means changing the VM config as follow:
+  * Modify the hostpci line for the GPU Device and append `,romfile=vga_vbios.bin`
+  * Modify the hostpci line for the Integrated HD Audio Device and append `,romfile=AMDGopDriver.rom`
+2. Neither of theese methods to extract the vBIOS worked in my case:
+  * Using the `vbios.c` file as reported [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm).
+  * Using the [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) "save bios" function running on baremetal Windows 11, as reported in various forums.
 
-The only way that really was to use the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to extract the required files from the BIOS motherboard file provided by the hardware vendor.
+So, while the instructions are valid, the problem remains of how to get the VGA vBIOS and the AMDGopDriver files.
+The only way that really worked in my case was to use the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to extract both files from the BIOS motherboard file provided by the hardware vendor. 
+
+The detailed steps are described below and are based on the note reported [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044).
+
+Once the VGA vBIOS and the AMDGopDriver files are extracted and copied to the Proxmox host, it possible to continue with the instructions [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm).
 
 ### Extracting vBIOS and AMDGopDriver with UBU
-This method, which is based on the note reported [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044) also has the following advantages:
+This method also has the following advantages:
 1. It enables extraction of *both* the vBIOS and the AMDGopDriver files from the vendor provided BIOS motherboard file. No need to download the AMDGopDriver from random sources.
 2. It ensures the files that will be passed to the VM are in sync with the motherbaord model and BIOS version.
 
@@ -71,9 +80,9 @@ To extract the required files:
 * Download the the motherboard BIOS update from the Vendor site. Make sure to use the same BIOS version as the one flashed on the motherboard.
    * Example: `PRIME-B450M-A-II-ASUS-4622.zip`
 * Download and extract the UBU utility to a directory
-* The UBU utility expects a file named `bios.bin` in this directory
+* The UBU utility expects a file named `bios.bin` in this directory:
   * Unzip the BIOS file (e.g.: `PRIME-B450M-A-II-ASUS-4622.zip`), copy its content (`PRIME-B450M-A-II-ASUS-4622.cap`) to thre UBU directory and rename it as `bios.bin`, then run `ubu.cmd`
-  *  The UBU utility will extract the file and present a set of interactive menus. Make sure to select the "Video OnBoard" option and then the "Extracted" option (to save the files) E.g.:  
+  *  The UBU utility will extract the file and present a set of interactive menus. Make sure to select the "Video OnBoard" option and then the "Extracted" option (to save the files to disk) E.g.:  
 ```
                       Main Menu
             [Current version in BIOS file]
@@ -121,22 +130,22 @@ Choice:X
         1 file(s) copied.
 Press any key to continue . . .
 ```
-* When UBU exists, thre will be an `Extracted`  folder with two subfolders, one for the vBIOS and one for GOP driver, respectively. These contains the required files!
+* When UBU exists, there will be an `Extracted` folder with two subfolders, one for the vBIOS and another one for the GOP driver, respectively. These contains the required files!
 * For the AMDGopDriver, one extra step is required: UBU produces a file in `efi` format, but according to the [source notes](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#optional-getting-ovmf-uefi-bios-working-error-43) a file in `rom` format is required instead.
-* A `rom` file can be gerated following the procedure [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044). I.e.:
-  * Download `EfiRom.exe` from [here](https://github.com/tianocore/edk2-BaseTools-win32)
+* A `rom` file can be generated following the procedure [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044) starting from `efi ` just extracted. I.e.:
+  * Download `EfiRom.exe` from [here](https://github.com/tianocore/edk2-BaseTools-win32).
   * Get the the Vendor and Device ID for the Audio Controller by running `lspci -nn | grep -e 'AMD/ATI'`, e.g.: 
     ```
     lspci -nn | grep -e 'AMD/ATI'
     09:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir [1002:1636] (rev da)
     09:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Radeon High Definition Audio Controller [1002:1637]
     ```
-    In my case 1002 is the Vendor ID and 1637 is Device ID.
+    In my case 1002 is the Vendor ID and 1637 is the Device ID.
   * Change to directory where the `AMDGopDriver.efi` is located and run `EfiRom.exe -f VendorId -i DeviceId -e AMDGopDriver.efi -o AMDGopDriver.rom`. E.g.:
     ```
     EfiRom.exe -f 1002 -i 1637 -e AMDGopDriver.efi -o AMDGopDriver.rom
     ```
-* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!** can be copied to the ProxMox host in the directory `/usr/share/kvm/" so it can be referenced in the VM config.
+* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can be copied to the Proxmox host in the directory `/usr/share/kvm/" so they can be referenced in the VM config.
 
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
