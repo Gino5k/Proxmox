@@ -54,16 +54,16 @@ For Ryzen APU passthrough to work *two* files are required:
 1. The VGA vBIOS
 2. The "AMDGopDriver" 
 
-Neither of the two methods below, which are typycally used to extract the vBIOS card, worked in my case:
+Neither of the two methods below, which are typycally used to extract the vBIOS file, worked in my case:
 * Using the `vbios.c` file as reported [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm)
-* Using [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) "save bios" function runing on baremetal Windows 11.
+* Using [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) "save bios" function running on baremetal Windows 11.
 
 ### Extracting vBIOS and AMDGopDriver with UBU
-The only way that really worked in case was to use the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to extract the required files from the BIOS motherboard file provided by Asus.
+The only way that really worked in case was to use the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to extract the required files from the BIOS motherboard file provided by the hardware vendor.
 
-This method, which is based on the notes reported [here]() also has the following advatages:
-1. It enables extraction of *both* the vBIOS and the AMDGopDriver files from the vendor files, as opposed to have to download the second one from random sources
-2. It ensures the files that will be paased to the VM are in sync with the motherbaord model and BIOS version.
+This method, which is based on the notes reported [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044) also has the following advantages:
+1. It enables extraction of *both* the vBIOS and the AMDGopDriver files from the vendor provided BIOS motherboard file, as opposed to have to download the second one from random sources
+2. It ensures the files that will be passed to the VM are in sync with the motherbaord model and BIOS version.
 
 Still, it relies on UBU, a 3rd party unverified BIOS extracting utility, so it certainly introduces some unknowns... Use it at your own risk :-). 
 
