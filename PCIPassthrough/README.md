@@ -50,12 +50,23 @@ dmesg | grep -i -e DMAR -e IOMMU
 ## VM Configuration in Proxmox
 * See the steps in the ["Creating the Windows VM"](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#creating-the-windows-vm) section of this document.
 ## Configuring the GPU in the Windows VM
-For Ryzen APU *two* BIOS files are required:
+For Ryzen APU passthrough to work *two* files are required:
 1. The VGA vBIOS
-2. The Audio card BIOS
-Both of the above need to be extracted from the BIOS files provided by Asus. Neither of the following common methodologies found online worked in my case:
-* Using the `vbios.c`file as reported in [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm)
-* Using [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) in baremetal Windows
+2. The "AMDGopDriver" 
+
+Neither of the two methods below, which are typycally used to extract the vBIOS card, worked in my case:
+* Using the `vbios.c` file as reported [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm)
+* Using [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) "save bios" function runing on baremetal Windows 11.
+
+### Extracting vBIOS and AMDGopDriver with UBU
+The only way that really worked in case was to use the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to extract the required files from the BIOS motherboard file provided by Asus.
+
+This method, which is based on the notes reported [here]() also has the following advatages:
+1. It enables extraction of *both* the vBIOS and the AMDGopDriver files from the vendor files, as opposed to have to download the second one from random sources
+2. It ensures the files that will be paased to the VM are in sync with the motherbaord model and BIOS version.
+
+Still, it relies on UBU, a 3rd party unverified BIOS extracting utility, so it certainly introduces some unknowns... Use it at your own risk :-). 
+
 
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
