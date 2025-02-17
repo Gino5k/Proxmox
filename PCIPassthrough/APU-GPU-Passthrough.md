@@ -47,27 +47,33 @@ shutdown -r now
 ```
 dmesg | grep -i -e DMAR -e IOMMU
 ```
-## VM Configuration in Proxmox
+## Creating the Windows VM
 * See the steps in the ["Creating the Windows VM"](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#creating-the-windows-vm) section of this document.
 ## Configuring the GPU in the Windows VM
 The instructions [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) are generally applicable, with the following changes / caveats:
-1. For Ryzen APU passthrough the section [(optional) Getting OVMF (UEFI) BIOS working: Error 43](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) is indeed required, i.e.:*two* files must be passed to the VM:.
-  * The VGA vBIOS
-  * The AMDGopDriver
-  
-    In practice this means changing the VM config as follow:
-  * Modify the hostpci line for the GPU Device and append `,romfile=vga_vbios.bin`
-  * Modify the hostpci line for the Integrated HD Audio Device and append `,romfile=AMDGopDriver.rom`
+1. For Ryzen APU passthrough the section [(optional) Getting OVMF (UEFI) BIOS working: Error 43](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm) is indeed required, i.e.: *two* files must be passed to the VM:
+  * The VGA vBIOS. As an example, this is referenced as `vbios_1636.dat` in the rest of this document.
+  * The AMDGopDriver. As an example, this is referenced as `AMDGopDriver.rom` in the rest of this document.
 2. Neither of theese methods to extract the vBIOS worked in my case:
   * Using the `vbios.c` file as reported [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm).
   * Using the [GPU-Z](https://www.techpowerup.com/download/techpowerup-gpu-z/) "save bios" function running on baremetal Windows 11, as reported in various forums.
 
-So, while the instructions are valid, the problem remains of how to get the VGA vBIOS and the AMDGopDriver files.
+So the problem remains of how to get the VGA vBIOS and the AMDGopDriver files.
 The only way that really worked in my case was to use the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to extract both files from the BIOS motherboard file provided by the hardware vendor. 
 
-The detailed steps are described below and are based on the note reported [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044).
+The detailed steps are described [below](#Extracting-vBIOS-and-AMDGopDriver-with-UBU) and are based on [this note](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044).
 
-Once the VGA vBIOS and the AMDGopDriver files are extracted and copied to the Proxmox host, it possible to continue with the instructions [here](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#configuring-the-gpu-in-the-windows-vm).
+Once the VGA vBIOS and the AMDGopDriver files are extracted and copied to the Proxmox host in the directory `/usr/share/kvm/` they can be referenced in the VM config, via two config lines that should look something like:
+```
+hostpci0: 0000:34:00.0,pcie=1,romfile=vbios_1636.dat
+hostpci1: 0000:34:00.1,pcie=1,romfile=AMDGopDriver.rom
+```
+
+Once that is done, it is possible to boot the Windows VM and complete the following steps:
+1. Run the VM and install the most recent [VirtIO drivers](https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers) (virtio-win-guest-tools.exe).
+2. Install the official [AMD GPU drivers](https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen-pro/ryzen-pro-4000-series/amd-ryzen-3-pro-4350g.html). Use the OFFLINE installer, the online installer will complain that the computer is not an official AMD computer.
+3. Install [RadeonResetBugFix service](https://github.com/inga-lovinde/RadeonResetBugFix) to make sure the GPU can be transferred properly to the host after stopping the VM. If this is not done, you will suffer from the famous "AMD Reset Bug".
+4. Finally, reboot the VM and follow [these instuctions](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#using-the-gpu-as-the-primary-gpu) to use the APU GPU as the primary GPU for the windows VM. 
 
 ### Extracting vBIOS and AMDGopDriver with UBU
 This method also has the following advantages:
@@ -132,7 +138,7 @@ Press any key to continue . . .
 ```
 * When UBU exists, there will be an `Extracted` folder with two subfolders, one for the vBIOS and another one for the GOP driver, respectively. These contains the required files!
 * For the AMDGopDriver, one extra step is required: UBU produces a file in `efi` format, but according to the [source notes](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#optional-getting-ovmf-uefi-bios-working-error-43) a file in `rom` format is required instead.
-* A `rom` file can be generated following the procedure [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044) starting from `efi ` just extracted. I.e.:
+* A `rom` file can be generated following the procedure [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044) starting from `efi` just extracted. I.e.:
   * Download `EfiRom.exe` from [here](https://github.com/tianocore/edk2-BaseTools-win32).
   * Get the the Vendor and Device ID for the Audio Controller by running `lspci -nn | grep -e 'AMD/ATI'`, e.g.: 
     ```
@@ -145,7 +151,7 @@ Press any key to continue . . .
     ```
     EfiRom.exe -f 1002 -i 1637 -e AMDGopDriver.efi -o AMDGopDriver.rom
     ```
-* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can be copied to the Proxmox host in the directory `/usr/share/kvm/" so they can be referenced in the VM config.
+* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be referenced in the VM config.
 
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
