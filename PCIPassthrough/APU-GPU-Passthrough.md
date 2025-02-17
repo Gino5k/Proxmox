@@ -17,7 +17,7 @@ echo "blacklist snd_hda_intel" >> /etc/modprobe.d/blacklist.conf
 echo "blacklist amdgpu"  >> /etc/modprobe.d/blacklist.conf
 echo "blacklist radeon" >>  >> /etc/modprobe.d/blacklist.conf
 ```
-* **Alternative** to the above: use `sofdep`:
+* As an **alternative** to the above, use `sofdep`:
 ```
 echo "softdep radeon pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
 echo "softdep amdgpu pre: vfio-pci" >> /etc/modprobe.d/vfio.conf
@@ -69,6 +69,8 @@ Once the VGA vBIOS and the AMDGopDriver files are extracted and copied to the Pr
 hostpci0: 0000:34:00.0,pcie=1,romfile=vbios_1636.dat
 hostpci1: 0000:34:00.1,pcie=1,romfile=AMDGopDriver.rom
 ```
+> [!NOTE]
+> The actual PCI addresses in the config snippets above will vary depending on the actual hardware configuration
 
 Once that is done, it is possible to boot the Windows VM and complete the following steps:
 1. Run the VM and install the most recent [VirtIO drivers](https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers) (virtio-win-guest-tools.exe).
