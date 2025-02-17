@@ -151,7 +151,7 @@ Press any key to continue . . .
     ```
     EfiRom.exe -f 1002 -i 1637 -e AMDGopDriver.efi -o AMDGopDriver.rom
     ```
-* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can now be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be [referenced in the VM config](Configuring-the-GPU-in-the-Windows-VM).
+* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can now be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be [referenced in the VM config](#Configuring-the-GPU-in-the-Windows-VM).
 
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
