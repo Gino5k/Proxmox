@@ -25,4 +25,4 @@ bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-i
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/microcode.sh)"
 ```
 ## GPU Passthrough
-Covered in more details in the [](PCIPassthrough/)
+Covered in more details in the [APU-GPU-Passthrough](PCIPassthrough/APU-GPU-Passthrough.md) section.
