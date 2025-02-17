@@ -85,10 +85,10 @@ Still, it relies on UBU, a 3rd party unverified BIOS extracting utility, so it c
 To extract the required files:
 * Download the the motherboard BIOS update from the Vendor site. Make sure to use the same BIOS version as the one flashed on the motherboard.
    * Example: `PRIME-B450M-A-II-ASUS-4622.zip`
-* Download and extract the UBU utility to a directory
+* Download and extract the [UBU utility](https://winraid.level1techs.com/t/tool-guide-news-uefi-bios-updater-ubu/30357) to a local directory on a Windows machine (*not* the VM).
 * The UBU utility expects a file named `bios.bin` in this directory:
-  * Unzip the BIOS file (e.g.: `PRIME-B450M-A-II-ASUS-4622.zip`), copy its content (`PRIME-B450M-A-II-ASUS-4622.cap`) to thre UBU directory and rename it as `bios.bin`, then run `ubu.cmd`
-  *  The UBU utility will extract the file and present a set of interactive menus. Make sure to select the "Video OnBoard" option and then the "Extracted" option (to save the files to disk) E.g.:  
+  * Unzip the BIOS file (e.g.: `PRIME-B450M-A-II-ASUS-4622.zip`), copy its content (`PRIME-B450M-A-II-ASUS-4622.cap`) to the UBU directory and rename it as `bios.bin`, then run `ubu.cmd`
+  * The UBU utility will extract the file and present a set of interactive menus. Make sure to select the "Video OnBoard" option and then the "Extracted" option (to save the files to disk) E.g.:  
 ```
                       Main Menu
             [Current version in BIOS file]
@@ -136,22 +136,22 @@ Choice:X
         1 file(s) copied.
 Press any key to continue . . .
 ```
-* When UBU exists, there will be an `Extracted` folder with two subfolders, one for the vBIOS and another one for the GOP driver, respectively. These contains the required files!
+* When UBU exits, there will be an `Extracted` folder with two subfolders, one for the vBIOS and another one for the GOP driver, respectively. These contains the required files!
 * For the AMDGopDriver, one extra step is required: UBU produces a file in `efi` format, but according to the [source notes](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file#optional-getting-ovmf-uefi-bios-working-error-43) a file in `rom` format is required instead.
 * A `rom` file can be generated following the procedure [here](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044) starting from `efi` just extracted. I.e.:
   * Download `EfiRom.exe` from [here](https://github.com/tianocore/edk2-BaseTools-win32).
-  * Get the the Vendor and Device ID for the Audio Controller by running `lspci -nn | grep -e 'AMD/ATI'`, e.g.: 
+  * Get the the Vendor and Device ID for the integrated Audio Controller by running `lspci -nn | grep -e 'AMD/ATI'`, e.g.: 
     ```
     lspci -nn | grep -e 'AMD/ATI'
     09:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir [1002:1636] (rev da)
     09:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Radeon High Definition Audio Controller [1002:1637]
     ```
     In my case 1002 is the Vendor ID and 1637 is the Device ID.
-  * Change to directory where the `AMDGopDriver.efi` is located and run `EfiRom.exe -f VendorId -i DeviceId -e AMDGopDriver.efi -o AMDGopDriver.rom`. E.g.:
+  * Change to the directory where the `AMDGopDriver.efi` is located and run `EfiRom.exe -f VendorId -i DeviceId -e AMDGopDriver.efi -o AMDGopDriver.rom`. E.g. (assuming `EfiRom.exe` is in the same directory as the `AMDGopDriver.efi`):
     ```
     EfiRom.exe -f 1002 -i 1637 -e AMDGopDriver.efi -o AMDGopDriver.rom
     ```
-* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be referenced in the VM config.
+* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can now be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be [referenced in the VM config](Configuring-the-GPU-in-the-Windows-VM).
 
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
