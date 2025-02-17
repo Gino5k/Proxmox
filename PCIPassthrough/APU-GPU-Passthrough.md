@@ -63,6 +63,7 @@ The only way that really worked in my case was to use the [UBU utility](https://
 
 The detailed steps are described [below](#Extracting-vBIOS-and-AMDGopDriver-with-UBU) and are based on [this note](https://gist.github.com/matt22207/bb1ba1811a08a715e32f106450b0418a?permalink_comment_id=4955044#gistcomment-4955044).
 
+### Using the vBIOS and AMDGoDriver in the VM config
 Once the VGA vBIOS and the AMDGopDriver files are extracted and copied to the Proxmox host in the directory `/usr/share/kvm/` they can be referenced in the VM config, via two config lines that should look something like:
 ```
 hostpci0: 0000:34:00.0,pcie=1,romfile=vbios_1636.dat
@@ -151,7 +152,7 @@ Press any key to continue . . .
     ```
     EfiRom.exe -f 1002 -i 1637 -e AMDGopDriver.efi -o AMDGopDriver.rom
     ```
-* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can now be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be [referenced in the VM config](#Configuring-the-GPU-in-the-Windows-VM).
+* The file `AMDGopDriver.rom` and the file `vbios_1636.dat` (**make sure to select the one matching the GPU device ID if there are multiple files!**) can now be copied to the Proxmox host in the directory `/usr/share/kvm/` so they can be [referenced in the VM config](#Using-the-vBIOS-and-AMDGoDriver-in-the-VM-config).
 
 # References
 * [Proxmox - Ryzen 7000 series - AMD Radeon 680M/780M/RDNA2/RDNA3 GPU passthrough](https://github.com/isc30/ryzen-7000-series-proxmox?tab=readme-ov-file)
