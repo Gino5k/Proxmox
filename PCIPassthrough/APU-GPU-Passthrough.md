@@ -11,7 +11,7 @@ Via the following options:
 GRUB_CMDLINE_LINUX_DEFAULT="iommu=pt initcall_blacklist=sysfb_init nomodeset video=vesa:off"
 ```
 * Run `update-grub` to make the above changes effective at the next reboot
-* Blacklist AMD GPU and Intel souund modules in `/etc/modprobe.d/blacklist.conf`:
+* Blacklist AMD GPU and Intel sound modules in `/etc/modprobe.d/blacklist.conf`:
 ```
 echo "blacklist snd_hda_intel" >> /etc/modprobe.d/blacklist.conf
 echo "blacklist amdgpu"  >> /etc/modprobe.d/blacklist.conf
