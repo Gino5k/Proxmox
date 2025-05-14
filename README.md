@@ -26,3 +26,5 @@ bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/microcode.
 ```
 ## GPU Passthrough
 Covered in more details in the [APU-GPU-Passthrough](PCIPassthrough/APU-GPU-Passthrough.md) section.
+
+<meta name="google-site-verification" content="fXIDydzirNm8LvotI_mc0NpOOW6k-8DH78yOmSL60EY" />
