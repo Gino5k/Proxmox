@@ -1,4 +1,3 @@
-<meta name="google-site-verification" content="fXIDydzirNm8LvotI_mc0NpOOW6k-8DH78yOmSL60EY" />
 # GPU Passthrough
 ## Enable IOMMU in the BIOS
 Via the following options:
