@@ -36,11 +36,11 @@ openssl ssl-cert radeontop vainfo mesa-utils
 These are the headers and compilers required specifically for building the XRDP stack from source.
 
 ``` bash
-sudo apt install -y build-essential git autoconf libtool pkg-config \
-libssl-dev libpam0g-dev libjpeg-dev libx11-dev libxfixes-dev \
+sudo apt install -y build-essential git autoconf libtool pkg-config nasm \
+libssl-dev libpam0g-dev libturbojpeg0-dev libjpeg-dev libx11-dev libxfixes-dev \
 libxrandr-dev libpulse-dev libopus-dev libfdk-aac-dev \
 xserver-xorg-dev libgbm-dev libepoxy-dev libxfont-dev \
-libpipewire-0.3-dev libspa-0.2-dev  
+libpipewire-0.3-dev libspa-0.2-dev libva-dev
 ```
 
 ## 3. Hardware & Security Permissions
@@ -58,12 +58,12 @@ sudo usermod -aG video,render,ssl-cert xrdp
 Configured with high-performance flags and modern audio support.
 
 ``` bash
-git clone --recursive https://github.com/neutrinolabs/xrdp.git  
-cd xrdp  
-./bootstrap  
-./configure --enable-opus --enable-fdk-aac --enable-ipv6 --enable-jpeg \
---enable-pixman --enable-vsock --enable-fuse  
-make && sudo make install  
+git clone --recursive https://github.com/neutrinolabs/xrdp.git
+cd xrdp
+./bootstrap
+./configure --enable-opus --enable-fdk-aac --enable-ipv6 --enable-tjpeg \
+--enable-pixman --enable-vsock --enable-fuse --enable-vaapi --enable-accel
+make && sudo make install
 ```
 
 ### B. xorgxrdp (Video Driver)
@@ -74,7 +74,7 @@ This driver provides the bridge between Xorg and the RDP protocol, utilizing Gla
 git clone https://github.com/neutrinolabs/xorgxrdp.git  
 cd xorgxrdp  
 ./bootstrap  
-./configure --enable-glamor  
+./configure --with-simd --enable-glamor
 make && sudo make install  
 ```
 
