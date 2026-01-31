@@ -255,7 +255,7 @@ ExecStart=/usr/local/sbin/xrdp
 [Install]  
 WantedBy=multi-user.target  
 ```
-Then [enable the scripts](D_-Enable-and-Start)
+Then [enable the scripts](d-enable-and-start)
 
 ## 7. Verification
 
