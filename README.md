@@ -24,7 +24,9 @@ bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/post-pve-i
 ```
 bash -c "$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/misc/microcode.sh)"
 ```
-## GPU Passthrough
+## Notes 
+### GPU Passthrough
 Covered in more details in the [APU-GPU-Passthrough](PCIPassthrough/APU-GPU-Passthrough.md) section.
 
-<meta name="google-site-verification" content="fXIDydzirNm8LvotI_mc0NpOOW6k-8DH78yOmSL60EY" />
+### LXC Desktop w/ GPU Acceleration and Audio Support
+Covered in more details in the [LXC-GPU-Passthrough](LXC/DesktopLXC-GPU-Sound.md) section.
