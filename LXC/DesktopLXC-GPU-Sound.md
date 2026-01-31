@@ -255,7 +255,7 @@ ExecStart=/usr/local/sbin/xrdp
 [Install]  
 WantedBy=multi-user.target  
 ```
-Then [enable the scripts](LXC/DesktopLXC-GPU-Sound.md#d-enable-and-start)
+Then [enable the scripts](DesktopLXC-GPU-Sound.md#d-enable-and-start)
 
 ## 7. Verification
 
