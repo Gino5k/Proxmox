@@ -20,6 +20,25 @@ sudo passwd gino
 ```
 
 ## 2. Package Installation
+
+### A. Update debian sources:
+
+Add ```contrib non-free non-free-firmware``` to ```/etc/apt/sources.list.d/debian.sources```:
+
+``` bash
+Types: deb deb-src
+URIs: http://deb.debian.org/debian
+Suites: trixie trixie-updates
+Components: contrib main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb deb-src
+URIs: http://security.debian.org
+Suites: trixie-security
+Components: contrib main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg  
+```
+
 ### A. Target Environment & Diagnostic Tools
 
 These packages are required for the daily operation of the desktop and for verifying hardware acceleration.
@@ -88,6 +107,30 @@ cd pipewire-module-xrdp
 ./bootstrap && ./configure  
 make && sudo make install  
 ```
+### D. Alternative: Use Debian Sources
+In case of issues compiling the latest code source from GitHub, the debian source packages could be use:
+
+``` bash
+# Install packaging tools
+sudo apt install -y dpkg-dev devscripts
+
+# Get dependencies and source
+sudo apt-get build-dep xrdp xorgxrdp pipewire-module-xrdp
+apt-get source xrdp xorgxrdp pipewire-module-xrdp
+
+# Note: To add --enable-glamor or --enable-vaapi here, 
+# it may be necessry to edit the "debian/rules" file before building.
+
+cd xrdp-*/
+dpkg-buildpackage -rfakeroot -b -uc -us
+cd ../xorgxrdp-*/
+dpkg-buildpackage -rfakeroot -b -uc -us
+cd ../pipewire-*/
+dpkg-buildpackage -rfakeroot -b -uc -us
+
+# Install resulting packages
+sudo apt install ../xrdp_*.deb ../xorgxrdp_*.deb ../pipewire_*.deb
+```
 
 ## 5. User Session Setup
 
@@ -124,16 +167,21 @@ sudo chmod 644 /etc/xrdp/cert.pem
 
 ### B. XRDP Main Config (/etc/xrdp/xrdp.ini)
 
-Apply performance and non-root ownership settings.
+Apply cert and non-root ownership settings.
 
 ``` ini
-[Globals]  
-security_layer=tls  
+[Globals]    
 certificate=/etc/xrdp/cert.pem  
 key_file=/etc/xrdp/key.pem  
 runtime_user=xrdp  
 runtime_group=xrdp  
 SessionSockdirGroup=xrdp  
+```
+
+Verfiy performance settings - in most cases they should be already set.
+
+``` ini
+[Globals]  
 use_fastpath=yes  
 max_bpp=32  
 allow_channels=true  
@@ -161,7 +209,15 @@ allowed_users=anybody
 needs_root_rights=no  
 ```
 
-### D. Systemd Service Deployment
+### D. Enable and Start
+
+``` bash
+sudo systemctl daemon-reload  
+sudo systemctl enable --now xrdp-sesman xrdp  
+```
+If the command fails due to lack of systemd scripts, use the templates in the next section.
+
+### E. Systemd Service Deployment
 
 Create the service files with proper dependency tracking.
 
@@ -199,13 +255,7 @@ ExecStart=/usr/local/sbin/xrdp
 [Install]  
 WantedBy=multi-user.target  
 ```
-
-### E. Enable and Start:
-
-``` bash
-sudo systemctl daemon-reload  
-sudo systemctl enable --now xrdp-sesman xrdp  
-```
+Then [enable the scripts](D_-Enable-and-Start)
 
 ## 7. Verification
 
