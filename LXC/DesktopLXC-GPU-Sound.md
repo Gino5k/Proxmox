@@ -29,13 +29,13 @@ Add ```contrib non-free non-free-firmware``` to ```/etc/apt/sources.list.d/debia
 Types: deb deb-src
 URIs: http://deb.debian.org/debian
 Suites: trixie trixie-updates
-Components: contrib main contrib non-free non-free-firmware
+Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 Types: deb deb-src
 URIs: http://security.debian.org
 Suites: trixie-security
-Components: contrib main contrib non-free non-free-firmware
+Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg  
 ```
 
@@ -45,9 +45,9 @@ These packages are required for the daily operation of the desktop and for verif
 
 ``` bash
 sudo apt update  
-sudo apt install -y xfce4 xfce4-goodies xserver-xorg-core xorg-video-abi-25 \
-pipewire-bin pipewire-audio-client-libraries pulseaudio-utils at-spi2-core \
-openssl ssl-cert radeontop vainfo mesa-utils  
+sudo apt-get install --no-install-recommends -y xfce4 xfce4-goodies xserver-xorg-core \
+xorg-video-abi-25 pipewire-bin pipewire-audio-client-libraries pulseaudio-utils \
+at-spi2-core openssl ssl-cert radeontop vainfo mesa-utils 
 ```
 
 ### B. Compilation & Development Headers
