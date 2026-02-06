@@ -45,9 +45,10 @@ These packages are required for the daily operation of the desktop and for verif
 
 ``` bash
 sudo apt update  
-sudo apt-get install --no-install-recommends -y xfce4 xfce4-goodies xserver-xorg-core \
+sudo apt-get install --no-install-recommends -y xfce4 xfce4-terminal xserver-xorg-core \
 xorg-video-abi-25 pipewire-bin pipewire-audio-client-libraries pulseaudio-utils \
-at-spi2-core openssl ssl-cert radeontop vainfo mesa-utils 
+pipewire wireplumber pipewire-pulse pipewire-audio at-spi2-core openssl ssl-cert \
+radeontop vainfo mesa-utils dbus-user-session libpam-systemd
 ```
 
 ### B. Compilation & Development Headers
@@ -212,8 +213,9 @@ needs_root_rights=no
 ### D. Enable and Start
 
 ``` bash
-sudo systemctl daemon-reload  
-sudo systemctl enable --now xrdp-sesman xrdp  
+sudo systemctl daemon-reload
+sudo systemctl --user --now enable pipewire wireplumber pipewire-pulse
+sudo systemctl enable --now xrdp-sesman xrdp
 ```
 If the command fails due to lack of systemd scripts, use the templates in the next section.
 
