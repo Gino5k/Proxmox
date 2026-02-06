@@ -23,7 +23,7 @@ sudo passwd gino
 
 ### A. Update debian sources:
 
-Add ```contrib non-free non-free-firmware``` to ```/etc/apt/sources.list.d/debian.sources```:
+Add ```deb-src```  and ```contrib non-free non-free-firmware``` to ```/etc/apt/sources.list.d/debian.sources```:
 
 ``` bash
 Types: deb deb-src
@@ -56,7 +56,7 @@ radeontop vainfo mesa-utils dbus-user-session libpam-systemd
 These are the headers and compilers required specifically for building the XRDP stack from source.
 
 ``` bash
-sudo apt install -y build-essential git autoconf libtool pkg-config nasm \
+sudo apt install --no-install-recommends -y build-essential git autoconf libtool pkg-config nasm \
 libssl-dev libpam0g-dev libturbojpeg0-dev libjpeg-dev libx11-dev libxfixes-dev \
 libxrandr-dev libpulse-dev libopus-dev libfdk-aac-dev \
 xserver-xorg-dev libgbm-dev libepoxy-dev libxfont-dev \
