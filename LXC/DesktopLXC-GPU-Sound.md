@@ -18,10 +18,19 @@ footprint as low as possible.
 ## Baseline system
 Debian 13.1 Trixie pve CT template.
 
-## User & Group Creation
+# Preliminary Assumptions
+1. The LXC container has a "clean" debian install, hence a "sudo" enabled user has not yet been
+created and the intial commands in this guide are run as root.
+1. The LXC container is configured in pve with the GPU as a "pass-through" reosurce, i.e. the following two devices:
+``` bash
+/dev/dri/card0
+/dev/dri/renderD128
+```
+1. Additionaly, the group permissions on the GPU devices are set correctly for the respective GID in the container, i.e.:
+  * "GID in CT" 44 (video group) for ```/dev/dri/card0```.
+  * "GID in CT" 992 (render group) for  ```/dev/dri/renderD128```.
 
-_The assumption is that at this stage the container has a "clean" debian install, hence a "sudo" enabled user has not been
-created yet and the intial commands are run as root._
+## Container User & Group Creation
 
 First, establish the user identities and security groups. This ensures the services run with minimal necessary privileges.
 
