@@ -408,5 +408,5 @@ Log in via RDP and run the following commands to confirm everything is working:
   * **VA-API Acceleration:** `vainfo` (Should list profiles without using sudo).
   * **GPU Load:** `radeontop` (Watch for activity during video playback).
 
-#References
+# References
 1. <a id="ref-pe0alx"></a>[A hardware accelerated Gnome workstation running in a container on Proxmox](https://pe0alx.nl/2025/04/a-hardware-accelerated-gnome-workstation-running-in-a-container-on-proxmox/)
